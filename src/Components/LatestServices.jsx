@@ -6,7 +6,7 @@ import ServiceCard from "./ServiceCard";
 export default function LatestServices() {
   const [services, setServices] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:5000/latest-services")
+    fetch("https://home-server-nine.vercel.app/latest-services")
       .then((res) => res.json())
       .then((data) => setServices(data));
   }, []);

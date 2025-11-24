@@ -9,7 +9,7 @@ export default function ManageServicePage() {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/services")
+    fetch("https://home-server-nine.vercel.app/services")
       .then((res) => res.json())
       .then((data) => setServices(data));
   }, []);
@@ -25,7 +25,7 @@ export default function ManageServicePage() {
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        fetch(`http://localhost:5000/delete-service/${id}`, {
+        fetch(`https://home-server-nine.vercel.app/delete-service/${id}`, {
           method: "DELETE",
         })
           .then((res) => {

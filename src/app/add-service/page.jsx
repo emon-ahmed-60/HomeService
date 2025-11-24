@@ -1,4 +1,5 @@
 "use client";
+import ProtectedRoute from "@/Components/ProtectedRoute";
 import { toast } from "react-toastify";
 
 export default function AddService() {
@@ -19,7 +20,7 @@ export default function AddService() {
       price,
     };
 
-    fetch("http://localhost:5000/add-service", {
+    fetch("https://home-server-nine.vercel.app/add-service", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,6 +37,7 @@ export default function AddService() {
   };
   return (
     <>
+    <ProtectedRoute>
       <div className="card bg-base-100 mx-auto w-full max-w-sm shrink-0 shadow-2xl">
         <div className="card-body">
           <form onSubmit={handleAddService}>
@@ -81,6 +83,7 @@ export default function AddService() {
           </form>
         </div>
       </div>
+      </ProtectedRoute>
     </>
   );
 }

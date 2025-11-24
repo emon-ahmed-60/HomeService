@@ -7,7 +7,7 @@ export default function Services() {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/services")
+    fetch("https://home-server-nine.vercel.app/services")
       .then((res) => res.json())
       .then((data) => setServices(data));
   }, []);
@@ -17,7 +17,7 @@ export default function Services() {
     const minPrice = e.target.minPrice.value;
     const maxPrice = e.target.maxPrice.value;
     fetch(
-      `http://localhost:5000/filter-services?minPrice=${minPrice}&maxPrice=${maxPrice}`
+      `https://home-server-nine.vercel.app/filter-services?minPrice=${minPrice}&maxPrice=${maxPrice}`
     )
       .then((res) => res.json())
       .then((data) => {

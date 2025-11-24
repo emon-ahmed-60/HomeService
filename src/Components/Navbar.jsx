@@ -2,11 +2,10 @@
 import Link from "next/link";
 import { useAuth } from "@/../lib/authContext";
 import { toast } from "react-toastify";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
   const { user, LogOut } = useAuth();
-  const router = useRouter();
   const pathName = usePathname();
   const handleSignOut = () => {
     LogOut()
@@ -97,7 +96,7 @@ export default function Navbar() {
               <path d="M3 10a2 2 0 0 1 .709-1.528l7-6a2 2 0 0 1 2.582 0l7 6A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
             </svg>
           </div>
-          <p className="text-black">
+          <p className="text-black hidden md:block">
             Home
             <span className="text-primary">Service</span>
           </p>

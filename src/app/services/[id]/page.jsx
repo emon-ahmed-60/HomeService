@@ -1,7 +1,7 @@
 
 export default async function ServiceDetailsPage({ params }) {
   const { id } = await params;
-  const service = await fetch(`http://localhost:5000/service/${id}`).then(
+  const service = await fetch(`https://home-server-nine.vercel.app/service/${id}`).then(
     (res) => res.json()
   );
   const {
