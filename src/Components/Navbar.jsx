@@ -1,13 +1,26 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useAuth } from "@/../lib/authContext";
+import { toast } from "react-toastify";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const navLinks = [
+  const { user, LogOut } = useAuth();
+  const router = useRouter();
+  const pathName = usePathname();
+  const handleSignOut = () => {
+    LogOut()
+      .then(() => {
+        toast.success("LogOut Successfull");
+      })
+      .catch((err) => {
+        toast.error(err.code);
+      });
+  };
+  const publicLinks = [
     { name: "Home", href: "/" },
     { name: "Services", href: "/services" },
   ];
-  const pathName = usePathname();
 
   return (
     <div className="navbar bg-base-100 shadow-sm container mx-auto px-5">
@@ -34,13 +47,36 @@ export default function Navbar() {
             tabIndex="-1"
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
-            {navLinks.map((link) => {
-              return (
-                <li key={link.name}>
-                  <Link href={link.href}>{link.name}</Link>
-                </li>
-              );
-            })}
+            {publicLinks.map((link) => {
+            return (
+              <li
+                className={
+                  pathName === link.href ? "text-blue-500 underline" : ""
+                }
+                key={link.href}
+              >
+                <Link href={link.href}>{link.name}</Link>
+              </li>
+            );
+          })}
+          {user && (
+            <>
+            <li
+              className={
+                pathName === "/add-service" ? "text-blue-500 underline" : ""
+              }             
+              >
+              <Link href="/add-service">Add Service</Link>
+            </li>
+            <li
+              className={
+                pathName === "/manage-service" ? "text-blue-500 underline" : ""
+              }             
+              >
+              <Link href="/manage-service">Manage Service</Link>
+            </li>
+              </>
+          )}
           </ul>
         </div>
         <Link href="/" className="btn btn-ghost text-xl">
@@ -69,23 +105,48 @@ export default function Navbar() {
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-          {navLinks.map((link) => {
-            const isActive =
-              pathName === link.href ||
-              (pathName.startsWith(link.href) && link.href !== "/");
+          {publicLinks.map((link) => {
             return (
               <li
-                className={isActive ? "text-blue-500 underline" : ""}
-                key={link.name}
+                className={
+                  pathName === link.href ? "text-blue-500 underline" : ""
+                }
+                key={link.href}
               >
                 <Link href={link.href}>{link.name}</Link>
               </li>
             );
           })}
+          {user && (
+            <>
+            <li
+              className={
+                pathName === "/add-service" ? "text-blue-500 underline" : ""
+              }             
+              >
+              <Link href="/add-service">Add Service</Link>
+            </li>
+            <li
+              className={
+                pathName === "/manage-service" ? "text-blue-500 underline" : ""
+              }             
+              >
+              <Link href="/manage-service">Manage Service</Link>
+            </li>
+              </>
+          )}
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="btn">Button</a>
+        {user ? (
+          <button onClick={handleSignOut} className="btn bg-primary text-white">
+            SignOut
+          </button>
+        ) : (
+          <Link href="/login" className="btn bg-primary text-white">
+            SignIn
+          </Link>
+        )}
       </div>
     </div>
   );

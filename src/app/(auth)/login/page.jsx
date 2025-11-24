@@ -1,83 +1,102 @@
-// app/login/page.js
-'use client'; // এটি একটি Client Component, কারণ এটি React Hooks এবং Event Handlers ব্যবহার করছে।
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/../lib/authContext'; // আপনার Auth Context import করা
-import Link from 'next/link';
+import Link from "next/link";
+import React from "react";
+import { useAuth } from "../../../../lib/authContext";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-  
-  // useAuth হুক থেকে প্রমাণীকরণের ফাংশনগুলো আনা
-  const { signInWithEmail, user } = useAuth(); 
+  const { signInWithEmail, googleSignIn } = useAuth();
   const router = useRouter();
 
-  // যদি ইউজার ইতিমধ্যেই লগইন করা থাকে, তাহলে তাকে /dashboard এ রিডাইরেক্ট করে দেওয়া
-  if (user) {
-    router.push('/'); 
-    return null; // কিছু রেন্ডার না করে অপেক্ষা করা
-  }
-  
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    setError(null);
-    setIsLoggingIn(true);
-
-    try {
-      await signInWithEmail(email, password);
-      // লগইন সফল হলে, ইউজারকে মূল পেজে নিয়ে যাওয়া
-      router.push('/');
-    } catch (firebaseError) {
-      console.error(firebaseError);
-      // Firebase থেকে আসা এরর মেসেজ দেখানো
-      setError(firebaseError.message); 
-    } finally {
-      setIsLoggingIn(false);
-    }
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    signInWithEmail(email, password)
+      .then(() => {
+        router.push("/");
+        toast.success("login successfull");
+      })
+      .catch((err) => {
+        toast.error(err.code);
+      });
   };
 
+  const handleGoogleSignIn = () => {
+    googleSignIn()
+      .then(() => {
+        toast.success("Google SignIn successfully");
+        router.push("/");
+      })
+      .catch((err) => {
+        toast.error(err.code);
+      });
+  };
   return (
-    <div style={{ padding: '20px', maxWidth: '400px', margin: '50px auto', border: '1px solid #ccc', borderRadius: '5px' }}>
-      <h1>লগইন</h1>
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-
-      <form onSubmit={handleLogin}>
-        <div>
-          <label htmlFor="email">ইমেল:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', margin: '5px 0' }}
-          />
+    <>
+      <div className="card bg-base-100 w-full mx-auto max-w-sm shrink-0 shadow-2xl">
+        <div className="card-body">
+          <h1 className="text-xl text-center font-bold">Please Login</h1>
+          <form onSubmit={handleLogin}>
+            <fieldset className="fieldset">
+              <label className="label">Email</label>
+              <input
+                type="email"
+                className="input"
+                placeholder="Email"
+                name="email"
+              />
+              <label className="label">Password</label>
+              <input
+                type="password"
+                className="input"
+                placeholder="Password"
+                name="password"
+              />
+              <div>
+                Dont have an account?please{" "}
+                <Link href="/register" className="text-blue-400">
+                  Register
+                </Link>
+              </div>
+              <button type="submit" className="btn btn-neutral mt-4">Login</button>
+              <button onClick={handleGoogleSignIn} type="button" className="btn bg-white text-black border-[#e5e5e5] mt-4">
+                <svg
+                  aria-label="Google logo"
+                  width="16"
+                  height="16"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512"
+                >
+                  <g>
+                    <path d="m0 0H512V512H0" fill="#fff"></path>
+                    <path
+                      fill="#34a853"
+                      d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
+                    ></path>
+                    <path
+                      fill="#4285f4"
+                      d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"
+                    ></path>
+                    <path
+                      fill="#fbbc02"
+                      d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"
+                    ></path>
+                    <path
+                      fill="#ea4335"
+                      d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"
+                    ></path>
+                  </g>
+                </svg>
+                Login with Google
+              </button>
+            </fieldset>
+          </form>
         </div>
-        <div>
-          <label htmlFor="password">পাসওয়ার্ড:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px', margin: '5px 0' }}
-          />
-        </div>
-        <button type="submit" disabled={isLoggingIn} style={{ padding: '10px 15px', backgroundColor: 'blue', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
-          {isLoggingIn ? 'লগইন হচ্ছে...' : 'লগইন করুন'}
-        </button>
-      </form>
-      
-      {/* এখানে সাইনআপ বা Google লগইন বাটন যোগ করতে পারেন */}
-      <p className='mt-3.5'>
-        এখনও অ্যাকাউন্ট নেই? <Link href="/signup">সাইনআপ করুন</Link>
-      </p>
-    </div>
+      </div>
+    </>
   );
 };
 
