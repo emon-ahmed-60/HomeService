@@ -15,7 +15,6 @@ export default async function ServiceDetailsPage({ params }) {
     serviceImg,
   } = service || {};
 
-  console.log(service);
   return (
     <>
       <div className="flex flex-col lg:flex-row gap-5 bg-base-100 shadow-sm">
